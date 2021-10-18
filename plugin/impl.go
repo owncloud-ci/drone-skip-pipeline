@@ -27,7 +27,7 @@ func (p *Plugin) Validate() error {
 // Execute provides the implementation of the plugin.
 func (p *Plugin) Execute() error {
 
-	c := NewCompare(
+	c := newCompare(
 		p.settings.GitPath,
 		p.pipeline.Build.TargetBranch,
 		p.settings.RunChangedPattern.Value(),

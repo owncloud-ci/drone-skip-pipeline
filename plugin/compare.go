@@ -22,7 +22,7 @@ type compare struct {
 	skipChanged []string
 }
 
-func NewCompare(gitPath, targetBranch string, runChanged, skipChanged []string) compare {
+func newCompare(gitPath, targetBranch string, runChanged, skipChanged []string) compare {
 	return compare{
 		gitPath:      gitPath,
 		targetBranch: targetBranch,
