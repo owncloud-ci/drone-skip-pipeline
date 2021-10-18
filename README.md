@@ -36,8 +36,8 @@ docker build \
 
 ```console
 docker run --rm \
-  -e PLUGIN_RUN_ON_CHANGED_PATTERN="deployment/playbook.yml" \
-  -e PLUGIN_INVENTORY="deployment/hosts.yml" \
+  -e PLUGIN_DISALLOW_SKIP_CHANGED="^.drone.star$" \
+  -e PLUGIN_ALLOW_SKIP_CHANGED="^docs/.*,^changelog/.*" \
   -v $(pwd):$(pwd) \
   -w $(pwd) \
   plugins/skip-pipeline

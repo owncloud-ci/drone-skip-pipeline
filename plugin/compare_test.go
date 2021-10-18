@@ -92,3 +92,31 @@ func TestDocChangedRunRule(t *testing.T) {
 	assert.Nil(t, err)
 	assert.True(t, isSkip)
 }
+
+func TestNoChangesDisallowList(t *testing.T) {
+	c := compare{
+		changed:          []string{},
+		allowSkipChanged: []string{},
+		disallowSkipChanged: []string{
+			`.*\.go$`,
+		},
+	}
+
+	isSkip, err := c.isSkip()
+	assert.Nil(t, err)
+	assert.True(t, isSkip)
+}
+
+func TestNoChangesAllowList(t *testing.T) {
+	c := compare{
+		changed: []string{},
+		allowSkipChanged: []string{
+			`.*\.go$`,
+		},
+		disallowSkipChanged: []string{},
+	}
+
+	isSkip, err := c.isSkip()
+	assert.Nil(t, err)
+	assert.True(t, isSkip)
+}

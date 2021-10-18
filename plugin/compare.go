@@ -88,6 +88,10 @@ func (c *compare) getChanged() error {
 
 func (c *compare) isSkip() (skip bool, err error) {
 
+	if len(c.changed) == 0 {
+		return true, nil
+	}
+
 	allowSkipChanged := false
 	disallowSkipChanged := false
 
@@ -170,6 +174,10 @@ func allowSkipCompare(strings, regexes []string) (bool, error) {
 			fmt.Printf(" - '%s' is not allowed to be skipped because it didn't match any skip rule", s)
 			skip = skip && false
 		}
+	}
+
+	if skip {
+		fmt.Println(" - all changed files are allowed to be skipped")
 	}
 
 	// all file changes are skipable
