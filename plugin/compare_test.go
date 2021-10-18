@@ -13,10 +13,10 @@ func TestInvalidRegex(t *testing.T) {
 			"cmd/foo.go",
 			"pkg/internal/bar.go",
 		},
-		skipChanged: []string{
-			"*",
+		allowSkipChanged: []string{
+			"*", // this is invalid regex syntax
 		},
-		runChanged: []string{},
+		disallowSkipChanged: []string{},
 	}
 
 	isSkip, err := c.isSkip()
@@ -31,10 +31,10 @@ func TestCodeChangedSkipRule(t *testing.T) {
 			"cmd/foo.go",
 			"pkg/internal/bar.go",
 		},
-		skipChanged: []string{
+		allowSkipChanged: []string{
 			`^docs/.*`,
 		},
-		runChanged: []string{},
+		disallowSkipChanged: []string{},
 	}
 
 	isSkip, err := c.isSkip()
@@ -50,15 +50,15 @@ func TestCodeChangedRunRule(t *testing.T) {
 			"pkg/internal/bar.go",
 			"docs/config.hugo",
 		},
-		skipChanged: []string{},
-		runChanged: []string{
+		allowSkipChanged: []string{},
+		disallowSkipChanged: []string{
 			`.*\.go$`,
 		},
 	}
 
 	isSkip, err := c.isSkip()
 	assert.Nil(t, err)
-	assert.False(t, isSkip)
+	assert.True(t, isSkip)
 }
 
 func TestDocChangedSkipRule(t *testing.T) {
@@ -66,10 +66,10 @@ func TestDocChangedSkipRule(t *testing.T) {
 		changed: []string{
 			"docs/index.md",
 		},
-		skipChanged: []string{
+		allowSkipChanged: []string{
 			`^docs/.*`,
 		},
-		runChanged: []string{},
+		disallowSkipChanged: []string{},
 	}
 	isSkip, err := c.isSkip()
 	assert.Nil(t, err)
@@ -82,8 +82,8 @@ func TestDocChangedRunRule(t *testing.T) {
 			"docs/index.md",
 			"docs/config.hugo",
 		},
-		skipChanged: []string{},
-		runChanged: []string{
+		allowSkipChanged: []string{},
+		disallowSkipChanged: []string{
 			`.*\.go$`,
 		},
 	}
