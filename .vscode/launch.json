@@ -9,8 +9,8 @@
             "program": "${workspaceFolder}/cmd/drone-skip-pipeline",
             "env": {
                 "DRONE_TARGET_BRANCH": "main",
-                "PLUGIN_RUN_ON_CHANGED_PATTERN": ".*.go",
-                "PLUGIN_SKIP_ON_CHANGED_PATTERN": ".*.star,.*.md",
+                "PLUGIN_DISALLOW_SKIP_CHANGED": "^.drone.star$",
+                "PLUGIN_ALLOW_SKIP_CHANGED": "^docs/.*,^changelog/.*",
                 "PLUGIN_GIT_PATH": "${workspaceFolder}",
             }
         },
