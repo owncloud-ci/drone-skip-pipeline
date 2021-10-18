@@ -24,12 +24,13 @@ func TestInvalidRegex(t *testing.T) {
 	assert.False(t, isSkip)
 }
 
-func TestCodeChangedSkipRule(t *testing.T) {
+func TestCodeAllowSkipDocs1(t *testing.T) {
 	c := compare{
 		changed: []string{
 			".drone.star",
 			"cmd/foo.go",
 			"pkg/internal/bar.go",
+			"docs/config.hugo",
 		},
 		allowSkipChanged: []string{
 			`^docs/.*`,
@@ -42,7 +43,22 @@ func TestCodeChangedSkipRule(t *testing.T) {
 	assert.False(t, isSkip)
 }
 
-func TestCodeChangedRunRule(t *testing.T) {
+func TestCodeAllowSkipDocs2(t *testing.T) {
+	c := compare{
+		changed: []string{
+			"docs/index.md",
+		},
+		allowSkipChanged: []string{
+			`^docs/.*`,
+		},
+		disallowSkipChanged: []string{},
+	}
+	isSkip, err := c.isSkip()
+	assert.Nil(t, err)
+	assert.True(t, isSkip)
+}
+
+func TestCodeDisallowSkipGoChanges1(t *testing.T) {
 	c := compare{
 		changed: []string{
 			".drone.star",
@@ -58,25 +74,10 @@ func TestCodeChangedRunRule(t *testing.T) {
 
 	isSkip, err := c.isSkip()
 	assert.Nil(t, err)
-	assert.True(t, isSkip)
+	assert.False(t, isSkip)
 }
 
-func TestDocChangedSkipRule(t *testing.T) {
-	c := compare{
-		changed: []string{
-			"docs/index.md",
-		},
-		allowSkipChanged: []string{
-			`^docs/.*`,
-		},
-		disallowSkipChanged: []string{},
-	}
-	isSkip, err := c.isSkip()
-	assert.Nil(t, err)
-	assert.True(t, isSkip)
-}
-
-func TestDocChangedRunRule(t *testing.T) {
+func TestCodeDisallowSkipGoChanges2(t *testing.T) {
 	c := compare{
 		changed: []string{
 			"docs/index.md",

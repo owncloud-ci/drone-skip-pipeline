@@ -129,25 +129,22 @@ func disallowSkipCompare(strings, regexes []string) (bool, error) {
 		res = append(res, re)
 	}
 
-	for _, re := range res {
-		disallowRule := true
-		for _, s := range strings {
-			disallowRule = disallowRule && re.MatchString(s)
+	disallowSkip := false
 
+	for _, re := range res {
+		for _, s := range strings {
 			if re.MatchString(s) {
-				fmt.Printf(" - '%s' is not allowed to be skipped because of '%s'", s, re.String())
+				fmt.Println(" - '", s, "'is not allowed to be skipped because of '", re.String(), "'")
+				disallowSkip = disallowSkip || true
 			}
 		}
 
-		// one disallow rule triggered
-		if !disallowRule {
-			return false, nil
-		}
+	}
+	if !disallowSkip {
+		fmt.Println(" - no file disallowed to be skipped was changed")
 	}
 
-	fmt.Println("   - no disallowed file was changed")
-	// no disallow rule triggered
-	return true, nil
+	return disallowSkip, nil
 }
 
 func allowSkipCompare(strings, regexes []string) (bool, error) {
@@ -171,7 +168,7 @@ func allowSkipCompare(strings, regexes []string) (bool, error) {
 
 		// one file change was not skipable
 		if !fileSkip {
-			fmt.Printf(" - '%s' is not allowed to be skipped because it didn't match any skip rule", s)
+			fmt.Println(" - '", s, "' is not allowed to be skipped because it didn't match any skip rule")
 			skip = skip && false
 		}
 	}
@@ -180,6 +177,5 @@ func allowSkipCompare(strings, regexes []string) (bool, error) {
 		fmt.Println(" - all changed files are allowed to be skipped")
 	}
 
-	// all file changes are skipable
 	return skip, nil
 }
