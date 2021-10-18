@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "drone-skip-pipeline",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/drone-skip-pipeline",
+            "env": {
+                "DRONE_TARGET_BRANCH": "main",
+                "PLUGIN_RUN_ON_CHANGED_PATTERN": ".*.go",
+                "PLUGIN_SKIP_ON_CHANGED_PATTERN": ".*.star,.*.md",
+                "PLUGIN_GIT_PATH": "${workspaceFolder}",
+            }
+        },
+    ]
+}

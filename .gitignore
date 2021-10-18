@@ -1,0 +1,6 @@
+/release/
+/drone-skip-pipeline*
+
+coverage.out
+.drone.yml
+CHANGELOG.md

@@ -1,0 +1,11 @@
+FROM arm64v8/alpine:3.14@sha256:b06a5cf61b2956088722c4f1b9a6f71dfe95f0b1fe285d44195452b8a1627de7
+
+LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.title="drone-skip-pipeline"
+LABEL org.opencontainers.image.url="https://github.com/owncloud-ci/drone-skip-pipeline"
+LABEL org.opencontainers.image.source="https://github.com/owncloud-ci/drone-skip-pipeline"
+LABEL org.opencontainers.image.documentation="https://github.com/owncloud-ci/drone-skip-pipeline"
+
+ADD release/linux/arm64/drone-skip-pipeline /bin/
+ENTRYPOINT ["/bin/drone-skip-pipeline"]

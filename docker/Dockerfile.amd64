@@ -1,0 +1,11 @@
+FROM alpine:3.14@sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a
+
+LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.title="drone-skip-pipeline"
+LABEL org.opencontainers.image.url="https://github.com/owncloud-ci/drone-skip-pipeline"
+LABEL org.opencontainers.image.source="https://github.com/owncloud-ci/drone-skip-pipeline"
+LABEL org.opencontainers.image.documentation="https://github.com/owncloud-ci/drone-skip-pipeline"
+
+ADD release/linux/amd64/drone-skip-pipeline /bin/
+ENTRYPOINT ["/bin/drone-skip-pipeline"]
