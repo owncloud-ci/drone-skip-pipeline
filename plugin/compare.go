@@ -18,16 +18,16 @@ type compare struct {
 
 	changed []string
 
-	runChanged  []string
-	skipChanged []string
+	disallowSkipChanged []string
+	allowSkipChanged    []string
 }
 
-func newCompare(gitPath, targetBranch string, runChanged, skipChanged []string) compare {
+func newCompare(gitPath, targetBranch string, disallowSkipChanged, allowSkipChanged []string) compare {
 	return compare{
-		gitPath:      gitPath,
-		targetBranch: targetBranch,
-		runChanged:   runChanged,
-		skipChanged:  skipChanged,
+		gitPath:             gitPath,
+		targetBranch:        targetBranch,
+		disallowSkipChanged: disallowSkipChanged,
+		allowSkipChanged:    allowSkipChanged,
 	}
 }
 
@@ -71,6 +71,9 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "could not get diff")
 	}
 
+	fmt.Println("### changed files ###")
+	fmt.Println(diff.Stats().String())
+
 	fileStats := diff.Stats()
 
 	changed := []string{}
@@ -85,43 +88,90 @@ func (c *compare) getChanged() error {
 
 func (c *compare) isSkip() (skip bool, err error) {
 
-	skipChanged := false
-	runChanged := false
+	allowSkipChanged := false
+	disallowSkipChanged := false
 
-	if len(c.skipChanged) == 0 {
-		skipChanged = true
+	if len(c.allowSkipChanged) == 0 {
+		allowSkipChanged = true
 	} else {
-		skipChanged, err = changed(c.changed, c.skipChanged)
+		allowSkipChanged, err = allowSkipCompare(c.changed, c.allowSkipChanged)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	if len(c.runChanged) == 0 {
-		runChanged = false
+	if len(c.disallowSkipChanged) == 0 {
+		disallowSkipChanged = false
 	} else {
-		runChanged, err = changed(c.changed, c.runChanged)
+		disallowSkipChanged, err = disallowSkipCompare(c.changed, c.disallowSkipChanged)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	skip = skipChanged && !runChanged
+	skip = allowSkipChanged && !disallowSkipChanged
 
 	return skip, nil
 }
 
-func changed(strings, regexes []string) (bool, error) {
+func disallowSkipCompare(strings, regexes []string) (bool, error) {
+	fmt.Println("### check if disallowed file was changed ###")
+	res := []*regexp.Regexp{}
 	for _, r := range regexes {
 		re, err := regexp.Compile(r)
 		if err != nil {
 			return false, errors.Wrap(err, fmt.Sprintf("no valid regex expression: '%s'", re))
 		}
+		res = append(res, re)
+	}
+
+	for _, re := range res {
+		disallowRule := true
 		for _, s := range strings {
+			disallowRule = disallowRule && re.MatchString(s)
+
 			if re.MatchString(s) {
-				return true, nil
+				fmt.Printf(" - '%s' is not allowed to be skipped because of '%s'", s, re.String())
 			}
 		}
+
+		// one disallow rule triggered
+		if !disallowRule {
+			return false, nil
+		}
 	}
-	return false, nil
+
+	fmt.Println("   - no disallowed file was changed")
+	// no disallow rule triggered
+	return true, nil
+}
+
+func allowSkipCompare(strings, regexes []string) (bool, error) {
+	fmt.Println("### check if changed files are on allowed skip list ###")
+	res := []*regexp.Regexp{}
+	for _, r := range regexes {
+		re, err := regexp.Compile(r)
+		if err != nil {
+			return false, errors.Wrap(err, fmt.Sprintf("no valid regex expression: '%s'", re))
+		}
+		res = append(res, re)
+	}
+
+	skip := true
+
+	for _, s := range strings {
+		fileSkip := false
+		for _, re := range res {
+			fileSkip = fileSkip || re.MatchString(s)
+		}
+
+		// one file change was not skipable
+		if !fileSkip {
+			fmt.Printf(" - '%s' is not allowed to be skipped because it didn't match any skip rule", s)
+			skip = skip && false
+		}
+	}
+
+	// all file changes are skipable
+	return skip, nil
 }

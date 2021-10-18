@@ -9,16 +9,16 @@ import (
 
 // Settings for the Plugin.
 type Settings struct {
-	GitPath            string
-	SkipChangedPattern cli.StringSlice
-	RunChangedPattern  cli.StringSlice
+	GitPath             string
+	DisallowSkipChanged cli.StringSlice
+	AllowSkipChanged    cli.StringSlice
 }
 
 // Validate handles the settings validation of the plugin.
 func (p *Plugin) Validate() error {
 
-	if len(p.settings.SkipChangedPattern.Value()) == 0 && len(p.settings.RunChangedPattern.Value()) == 0 {
-		return errors.New("you must at least set a skip or run pattern")
+	if len(p.settings.DisallowSkipChanged.Value()) == 0 && len(p.settings.AllowSkipChanged.Value()) == 0 {
+		return errors.New("you must at least set a allow skip or disallow skip pattern")
 	}
 
 	return nil
@@ -30,8 +30,8 @@ func (p *Plugin) Execute() error {
 	c := newCompare(
 		p.settings.GitPath,
 		p.pipeline.Build.TargetBranch,
-		p.settings.RunChangedPattern.Value(),
-		p.settings.SkipChangedPattern.Value(),
+		p.settings.DisallowSkipChanged.Value(),
+		p.settings.AllowSkipChanged.Value(),
 	)
 
 	err := c.open()

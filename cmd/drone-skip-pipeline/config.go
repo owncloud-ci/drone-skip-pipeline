@@ -16,16 +16,16 @@ func settingsFlags(settings *plugin.Settings) []cli.Flag {
 			Destination: &settings.GitPath,
 		},
 		&cli.StringSliceFlag{
-			Name:        "pattern-run-changed",
-			EnvVars:     []string{"PLUGIN_RUN_ON_CHANGED_PATTERN"},
-			Usage:       "pattern to run on if changed",
-			Destination: &settings.RunChangedPattern,
+			Name:        "disallow-skip-changed",
+			EnvVars:     []string{"PLUGIN_DISALLOW_SKIP_CHANGED"},
+			Usage:       "files never allowed to be skipped if changed",
+			Destination: &settings.DisallowSkipChanged,
 		},
 		&cli.StringSliceFlag{
-			Name:        "pattern-skip-changed",
-			EnvVars:     []string{"PLUGIN_SKIP_ON_CHANGED_PATTERN"},
-			Usage:       "pattern to skip if changed",
-			Destination: &settings.SkipChangedPattern,
+			Name:        "allow-skip-changed",
+			EnvVars:     []string{"PLUGIN_ALLOW_SKIP_CHANGED"},
+			Usage:       "files allowed to be skipped, even if changed",
+			Destination: &settings.AllowSkipChanged,
 		},
 	}
 }
