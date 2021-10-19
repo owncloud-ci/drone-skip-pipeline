@@ -13,9 +13,8 @@ import (
 type compare struct {
 	gitPath string
 
-	remote       string
-	commitSHA    string
-	targetBranch string
+	commitSHAafter  string
+	commitSHAbefore string
 
 	repo *git.Repository
 
@@ -26,14 +25,13 @@ type compare struct {
 }
 
 func newCompare(
-	gitPath, remote, commitSHA, targetBranch string,
+	gitPath, commitSHAafter, commitSHAbefore string,
 	disallowSkipChanged, allowSkipChanged []string,
 ) compare {
 	return compare{
 		gitPath:             gitPath,
-		remote:              remote,
-		commitSHA:           commitSHA,
-		targetBranch:        targetBranch,
+		commitSHAafter:      commitSHAafter,
+		commitSHAbefore:     commitSHAbefore,
 		disallowSkipChanged: disallowSkipChanged,
 		allowSkipChanged:    allowSkipChanged,
 	}
@@ -49,25 +47,19 @@ func (c *compare) open() (err error) {
 
 func (c *compare) getChanged() error {
 
-	sourceHash := plumbing.NewHash(c.commitSHA)
-	sourceCommit, err := c.repo.CommitObject(sourceHash)
+	beforeHash := plumbing.NewHash(c.commitSHAbefore)
+	beforeCommit, err := c.repo.CommitObject(beforeHash)
 	if err != nil {
-		return errors.Wrap(err, "source commit not found")
+		return errors.Wrap(err, "commit from DRONE_COMMIT_BEFORE not found")
 	}
 
-	targetRefName := plumbing.NewRemoteReferenceName(c.remote, c.targetBranch)
-
-	targetRef, err := c.repo.Reference(targetRefName, false)
+	afterHash := plumbing.NewHash(c.commitSHAafter)
+	afterCommit, err := c.repo.CommitObject(afterHash)
 	if err != nil {
-		return errors.Wrap(err, "could not resolve target branch")
+		return errors.Wrap(err, "commit from DRONE_COMMIT_AFTER not found")
 	}
 
-	targetCommit, err := c.repo.CommitObject(targetRef.Hash())
-	if err != nil {
-		return errors.Wrap(err, "target commit not found")
-	}
-
-	diff, err := sourceCommit.Patch(targetCommit)
+	diff, err := beforeCommit.Patch(afterCommit)
 	if err != nil {
 		return errors.Wrap(err, "could not get diff")
 	}
