@@ -47,9 +47,6 @@ func (c *compare) open() (err error) {
 
 func (c *compare) getChanged() error {
 
-	c.commitSHAbefore = "c2c198c3f38034b62138618796ef1af0a47a86d5"
-	c.commitSHAafter = "debaf34326530e8dce844215140b53c36557fe39"
-
 	beforeHash := plumbing.NewHash(c.commitSHAbefore)
 	beforeCommit, err := c.repo.CommitObject(beforeHash)
 	if err != nil {
@@ -67,6 +64,7 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "commit from DRONE_COMMIT_AFTER not found")
 	}
 
+	// use the parent of beforeCommit so that we only get changes from the PR
 	diff, err := parentCommit.Patch(afterCommit)
 	if err != nil {
 		return errors.Wrap(err, "could not get diff")
