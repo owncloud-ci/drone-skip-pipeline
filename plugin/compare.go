@@ -14,7 +14,7 @@ type compare struct {
 	gitPath string
 
 	remote       string
-	sourceBranch string
+	commitSHA    string
 	targetBranch string
 
 	repo *git.Repository
@@ -26,13 +26,13 @@ type compare struct {
 }
 
 func newCompare(
-	gitPath, remote, sourceBranch, targetBranch string,
+	gitPath, remote, commitSHA, targetBranch string,
 	disallowSkipChanged, allowSkipChanged []string,
 ) compare {
 	return compare{
 		gitPath:             gitPath,
 		remote:              remote,
-		sourceBranch:        sourceBranch,
+		commitSHA:           commitSHA,
 		targetBranch:        targetBranch,
 		disallowSkipChanged: disallowSkipChanged,
 		allowSkipChanged:    allowSkipChanged,
@@ -49,14 +49,8 @@ func (c *compare) open() (err error) {
 
 func (c *compare) getChanged() error {
 
-	sourceRefName := plumbing.NewRemoteReferenceName(c.remote, c.sourceBranch)
-
-	sourceRef, err := c.repo.Reference(sourceRefName, false)
-	if err != nil {
-		return errors.Wrap(err, "could not resolve source branch")
-	}
-
-	sourceCommit, err := c.repo.CommitObject(sourceRef.Hash())
+	sourceHash := plumbing.NewHash(c.commitSHA)
+	sourceCommit, err := c.repo.CommitObject(sourceHash)
 	if err != nil {
 		return errors.Wrap(err, "source commit not found")
 	}

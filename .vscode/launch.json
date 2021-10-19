@@ -8,8 +8,8 @@
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/drone-skip-pipeline",
             "env": {
+                "CI_COMMIT_SHA": "9fb5a8cde5075a36f6e2543d0e7c76adfe62082b",
                 "DRONE_TARGET_BRANCH": "main",
-                "DRONE_SOURCE_BRANCH": "fix",
                 "PLUGIN_DISALLOW_SKIP_CHANGED": "^.drone.star$",
                 "PLUGIN_ALLOW_SKIP_CHANGED": "^docs/.*,^changelog/.*",
                 "PLUGIN_GIT_PATH": "${workspaceFolder}",
