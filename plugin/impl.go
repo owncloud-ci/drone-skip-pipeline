@@ -29,9 +29,8 @@ func (p *Plugin) Execute() error {
 
 	c := newCompare(
 		p.settings.GitPath,
-		"origin",
-		p.pipeline.Commit.SHA,
-		p.pipeline.Build.TargetBranch,
+		p.pipeline.Commit.After,
+		p.pipeline.Commit.Before,
 		p.settings.DisallowSkipChanged.Value(),
 		p.settings.AllowSkipChanged.Value(),
 	)
