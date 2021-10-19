@@ -11,7 +11,10 @@ import (
 
 // Release holds ties the drone env data and github client together.
 type compare struct {
-	gitPath      string
+	gitPath string
+
+	remote       string
+	sourceBranch string
 	targetBranch string
 
 	repo *git.Repository
@@ -22,9 +25,14 @@ type compare struct {
 	allowSkipChanged    []string
 }
 
-func newCompare(gitPath, targetBranch string, disallowSkipChanged, allowSkipChanged []string) compare {
+func newCompare(
+	gitPath, remote, sourceBranch, targetBranch string,
+	disallowSkipChanged, allowSkipChanged []string,
+) compare {
 	return compare{
 		gitPath:             gitPath,
+		remote:              remote,
+		sourceBranch:        sourceBranch,
 		targetBranch:        targetBranch,
 		disallowSkipChanged: disallowSkipChanged,
 		allowSkipChanged:    allowSkipChanged,
@@ -41,20 +49,19 @@ func (c *compare) open() (err error) {
 
 func (c *compare) getChanged() error {
 
-	headRef, err := c.repo.Head()
+	sourceRefName := plumbing.NewRemoteReferenceName(c.remote, c.sourceBranch)
+
+	sourceRef, err := c.repo.Reference(sourceRefName, false)
 	if err != nil {
-		return errors.Wrap(err, "could not open git repo")
+		return errors.Wrap(err, "could not resolve source branch")
 	}
 
-	headCommit, err := c.repo.CommitObject(headRef.Hash())
+	sourceCommit, err := c.repo.CommitObject(sourceRef.Hash())
 	if err != nil {
-		return errors.Wrap(err, "could not find HEAD")
+		return errors.Wrap(err, "source commit not found")
 	}
 
-	targetRefName := plumbing.NewBranchReferenceName(c.targetBranch)
-	if err != nil {
-		return errors.Wrap(err, "could not reference target branch")
-	}
+	targetRefName := plumbing.NewRemoteReferenceName(c.remote, c.targetBranch)
 
 	targetRef, err := c.repo.Reference(targetRefName, false)
 	if err != nil {
@@ -66,7 +73,7 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "target commit not found")
 	}
 
-	diff, err := headCommit.Patch(targetCommit)
+	diff, err := sourceCommit.Patch(targetCommit)
 	if err != nil {
 		return errors.Wrap(err, "could not get diff")
 	}
