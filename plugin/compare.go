@@ -47,6 +47,8 @@ func (c *compare) open() (err error) {
 
 func (c *compare) getChanged() error {
 
+	fmt.Println("DRONE_COMMIT_BEFORE: ", c.commitSHAbefore)
+
 	beforeHash := plumbing.NewHash(c.commitSHAbefore)
 	beforeCommit, err := c.repo.CommitObject(beforeHash)
 	if err != nil {
@@ -57,6 +59,8 @@ func (c *compare) getChanged() error {
 	if err != nil {
 		return errors.Wrap(err, "parent not found")
 	}
+
+	fmt.Println("DRONE_COMMIT_AFTER: ", c.commitSHAafter)
 
 	afterHash := plumbing.NewHash(c.commitSHAafter)
 	afterCommit, err := c.repo.CommitObject(afterHash)
@@ -70,15 +74,15 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "could not get diff")
 	}
 
-	fmt.Println("### changed files ###")
-	fmt.Println(diff.Stats().String())
-
 	fileStats := diff.Stats()
-
 	changed := []string{}
 
+	fmt.Println("### changed files ###")
 	for _, f := range fileStats {
-		changed = append(changed, f.Name)
+		if f.Name != "" {
+			fmt.Print(f.String())
+			changed = append(changed, f.Name)
+		}
 	}
 
 	c.changed = changed
@@ -133,7 +137,7 @@ func disallowSkipCompare(strings, regexes []string) (bool, error) {
 	for _, re := range res {
 		for _, s := range strings {
 			if re.MatchString(s) {
-				fmt.Println(" - '", s, "'is not allowed to be skipped because of '", re.String(), "'")
+				fmt.Println(" - '" + s + "'is not allowed to be skipped because of '" + re.String() + "'")
 				disallowSkip = disallowSkip || true
 			}
 		}
@@ -167,7 +171,7 @@ func allowSkipCompare(strings, regexes []string) (bool, error) {
 
 		// one file change was not skipable
 		if !fileSkip {
-			fmt.Println(" - '", s, "' is not allowed to be skipped because it didn't match any skip rule")
+			fmt.Println(" - '" + s + "' is not allowed to be skipped")
 			skip = skip && false
 		}
 	}
