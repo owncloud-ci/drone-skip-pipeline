@@ -55,11 +55,6 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "commit from DRONE_COMMIT_BEFORE not found")
 	}
 
-	parentCommit, err := beforeCommit.Parent(0)
-	if err != nil {
-		return errors.Wrap(err, "parent not found")
-	}
-
 	fmt.Println("DRONE_COMMIT_AFTER: ", c.commitSHAafter)
 
 	afterHash := plumbing.NewHash(c.commitSHAafter)
@@ -68,8 +63,15 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "commit from DRONE_COMMIT_AFTER not found")
 	}
 
-	// use the parent of beforeCommit so that we only get changes from the PR
-	diff, err := parentCommit.Patch(afterCommit)
+	// https://stackoverflow.com/a/7256391
+	// get merge base to produce a PR style diff
+	mergeBaseCommits, err := beforeCommit.MergeBase(afterCommit)
+	if err != nil || len(mergeBaseCommits) < 1 {
+		return errors.Wrap(err, "could not find common merge base")
+	}
+
+	// this equals an `git diff before...after`
+	diff, err := mergeBaseCommits[0].Patch(afterCommit)
 	if err != nil {
 		return errors.Wrap(err, "could not get diff")
 	}
