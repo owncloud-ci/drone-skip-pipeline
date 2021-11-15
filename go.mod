@@ -15,7 +15,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 	golang.org/x/net v0.0.0-20210508051633-16afe75a6701 // indirect
-	honnef.co/go/tools v0.2.1
+	honnef.co/go/tools v0.2.2
 )
 
 require (
