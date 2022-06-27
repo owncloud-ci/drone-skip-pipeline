@@ -3,7 +3,7 @@ module github.com/owncloud-ci/drone-skip-pipeline
 go 1.17
 
 require (
-	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/drone-plugins/drone-plugin-lib v0.4.0
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/joho/godotenv v1.4.0
@@ -11,7 +11,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/testify v1.7.5
-	github.com/urfave/cli/v2 v2.8.1
+	github.com/urfave/cli/v2 v2.10.3
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
