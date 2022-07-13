@@ -3,6 +3,7 @@ package plugin
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -83,7 +84,7 @@ func (c *compare) getChanged() error {
 	for _, f := range fileStats {
 		if f.Name != "" {
 			fmt.Print(f.String())
-			changed = append(changed, f.Name)
+			changed = append(changed, strings.Trim(f.Name, "\""))
 		}
 	}
 
