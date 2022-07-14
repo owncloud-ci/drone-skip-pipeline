@@ -3,9 +3,12 @@ package plugin
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	fdiff "github.com/go-git/go-git/v5/plumbing/format/diff"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 )
 
@@ -76,7 +79,9 @@ func (c *compare) getChanged() error {
 		return errors.Wrap(err, "could not get diff")
 	}
 
-	fileStats := diff.Stats()
+	patches := diff.FilePatches()
+	fileStats := getFileStatsFromFilePatches(patches)
+
 	changed := []string{}
 
 	fmt.Println("### changed files ###")
@@ -89,6 +94,58 @@ func (c *compare) getChanged() error {
 
 	c.changed = changed
 	return nil
+}
+
+// patched version of private upstream function
+// https://github.com/go-git/go-git/blob/bc1f419cebcf7505db31149fa459e9e3f8260e00/plumbing/object/patch.go#L306-L309
+func getFileStatsFromFilePatches(filePatches []fdiff.FilePatch) object.FileStats {
+	var fileStats object.FileStats
+
+	for _, fp := range filePatches {
+		// ignore empty patches (binary files, submodule refs updates)
+		//if len(fp.Chunks()) == 0 {
+		//	continue
+		//}
+
+		cs := object.FileStat{}
+		from, to := fp.Files()
+		if from == nil {
+			// New File is created.
+			cs.Name = to.Path()
+		} else if to == nil {
+			// File is deleted.
+			cs.Name = from.Path()
+		} else if from.Path() != to.Path() {
+			// File is renamed. Not supported.
+			// cs.Name = fmt.Sprintf("%s => %s", from.Path(), to.Path())
+		} else {
+			cs.Name = from.Path()
+		}
+
+		for _, chunk := range fp.Chunks() {
+			s := chunk.Content()
+			if len(s) == 0 {
+				continue
+			}
+
+			switch chunk.Type() {
+			case fdiff.Add:
+				cs.Addition += strings.Count(s, "\n")
+				if s[len(s)-1] != '\n' {
+					cs.Addition++
+				}
+			case fdiff.Delete:
+				cs.Deletion += strings.Count(s, "\n")
+				if s[len(s)-1] != '\n' {
+					cs.Deletion++
+				}
+			}
+		}
+
+		fileStats = append(fileStats, cs)
+	}
+
+	return fileStats
 }
 
 func (c *compare) isSkip() (skip bool, err error) {
