@@ -4,7 +4,6 @@ def main(ctx):
     stages = [
         linux(ctx, "amd64"),
         linux(ctx, "arm64"),
-        linux(ctx, "arm"),
     ]
 
     after = manifest(ctx) + pushrm(ctx) + release(ctx) + notification(ctx)
