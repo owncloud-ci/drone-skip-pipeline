@@ -30,7 +30,7 @@ def testing(ctx):
         "steps": [
             {
                 "name": "staticcheck",
-                "image": "owncloudci/golang:1.18",
+                "image": "owncloudci/golang:1.20",
                 "pull": "always",
                 "commands": [
                     "go run honnef.co/go/tools/cmd/staticcheck ./...",
@@ -44,7 +44,7 @@ def testing(ctx):
             },
             {
                 "name": "lint",
-                "image": "owncloudci/golang:1.18",
+                "image": "owncloudci/golang:1.20",
                 "commands": [
                     "go run golang.org/x/lint/golint -set_exit_status ./...",
                 ],
@@ -57,7 +57,7 @@ def testing(ctx):
             },
             {
                 "name": "vet",
-                "image": "owncloudci/golang:1.18",
+                "image": "owncloudci/golang:1.20",
                 "commands": [
                     "go vet ./...",
                 ],
@@ -70,7 +70,7 @@ def testing(ctx):
             },
             {
                 "name": "test",
-                "image": "owncloudci/golang:1.18",
+                "image": "owncloudci/golang:1.20",
                 "commands": [
                     "go test -cover ./...",
                 ],
@@ -110,7 +110,7 @@ def linux(ctx, arch):
     steps = [
         {
             "name": "environment",
-            "image": "owncloudci/golang:1.18",
+            "image": "owncloudci/golang:1.20",
             "pull": "always",
             "environment": {
                 "CGO_ENABLED": "0",
@@ -122,7 +122,7 @@ def linux(ctx, arch):
         },
         {
             "name": "build",
-            "image": "owncloudci/golang:1.18",
+            "image": "owncloudci/golang:1.20",
             "environment": {
                 "CGO_ENABLED": "0",
             },
@@ -130,7 +130,7 @@ def linux(ctx, arch):
         },
         {
             "name": "executable",
-            "image": "owncloudci/golang:1.18",
+            "image": "owncloudci/golang:1.20",
             "commands": [
                 "./release/linux/%s/drone-skip-pipeline --help" % (arch),
             ],
