@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
-	github.com/drone-plugins/drone-plugin-lib v0.4.1
+	github.com/drone-plugins/drone-plugin-lib v0.4.2
 	github.com/go-git/go-git/v5 v5.7.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
