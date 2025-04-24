@@ -13,7 +13,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v2 v2.27.6
 	golang.org/x/crypto v0.15.0 // indirect
-	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
+	golang.org/x/lint v0.0.0-20241112194109-818c5a804067
 	golang.org/x/net v0.18.0 // indirect
 	honnef.co/go/tools v0.4.6
 )
