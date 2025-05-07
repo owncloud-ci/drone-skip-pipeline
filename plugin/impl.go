@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // Settings for the Plugin.
