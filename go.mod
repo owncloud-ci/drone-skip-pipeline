@@ -1,6 +1,6 @@
 module github.com/owncloud-ci/drone-skip-pipeline
 
-go 1.20
+go 1.22
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
@@ -11,12 +11,14 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sirupsen/logrus v1.9.2 // indirect
 	github.com/stretchr/testify v1.10.0
-	github.com/urfave/cli/v2 v2.27.7
+	github.com/urfave/cli/v3 v3.4.1
 	golang.org/x/crypto v0.15.0 // indirect
 	golang.org/x/lint v0.0.0-20241112194109-818c5a804067
 	golang.org/x/net v0.18.0 // indirect
 	honnef.co/go/tools v0.4.6
 )
+
+require github.com/urfave/cli/v2 v2.23.6 // indirect
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
