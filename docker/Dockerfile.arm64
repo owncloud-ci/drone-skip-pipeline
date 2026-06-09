@@ -1,4 +1,4 @@
-FROM arm64v8/alpine:3.22@sha256:d7641d4e055534bdac03070d3223d064999a9f2296598ec5122b66ceec18887b
+FROM arm64v8/alpine:3.24@sha256:7669ab567680cf2bca3130a407e430cc4f08e42328e5ad7305f86a4849accf18
 
 LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
 LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
